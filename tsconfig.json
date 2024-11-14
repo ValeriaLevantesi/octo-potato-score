@@ -1,24 +1,8 @@
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "strict": true,
-    "jsx": "preserve",
     "skipLibCheck": true,
-    "types": [
-      "nuxt",
-      "@nuxt/types",
-      "@types/node"
-    ],
-    "allowJs": true,
-    "esModuleInterop": true,
-    "paths": {
-      "~/*": ["./*"],
-      "#app": ["./.nuxt/types/app.d.ts"]
-    }
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "types": ["node"]
+  }
 } 

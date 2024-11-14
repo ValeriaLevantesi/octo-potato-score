@@ -4,8 +4,7 @@
       "src": "nuxt.config.ts",
       "use": "@nuxtjs/vercel-builder",
       "config": {
-        "postinstall": "npm run postinstall",
-        "buildCommand": "npm run build"
+        "serverFiles": ["server/**"]
       }
     }
   ],
@@ -16,6 +15,9 @@
       "headers": {
         "Cache-Control": "public, max-age=0, must-revalidate"
       }
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
