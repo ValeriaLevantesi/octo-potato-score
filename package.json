@@ -5,9 +5,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "clean": "rm -rf .nuxt .output node_modules yarn.lock",
-    "serve": "yarn clean && yarn install && yarn build && yarn preview"
+    "deploy": "yarn generate && gh-pages -d .output/public"
   },
   "dependencies": {
     "nuxt": "^3.9.0",
