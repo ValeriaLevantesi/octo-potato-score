@@ -1,0 +1,1 @@
+This is an app conceived to show different candidates (startups) and the detail of their score.
