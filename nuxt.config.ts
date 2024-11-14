@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   nitro: {
-    preset: 'vercel'
+    preset: process.env.VERCEL ? 'vercel' : 'node-server'
   },
 
   compatibilityDate: '2024-04-03',
@@ -15,5 +15,7 @@ export default defineNuxtConfig({
 
   css: [
     '~/assets/css/main.css'
-  ]
+  ],
+
+  ssr: true
 })
