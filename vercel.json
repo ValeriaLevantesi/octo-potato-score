@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
-  "framework": "nuxt",
   "builds": [
     {
       "src": "nuxt.config.ts",
