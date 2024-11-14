@@ -98,7 +98,12 @@ const router = useRouter()
 const candidateName = ref('Candidate name')
 const filterText = ref('')
 
-const visibleColumns = ref({
+// Define column types
+type ColumnName = 'criteriaLabel' | 'criteriaId' | 'score' | 'field' | 'datapoint' | 'grounding'
+type VisibleColumns = Record<ColumnName, boolean>
+
+// Use the type for visibleColumns
+const visibleColumns = ref<VisibleColumns>({
   criteriaLabel: true,
   criteriaId: true,
   score: true,
@@ -107,7 +112,17 @@ const visibleColumns = ref({
   grounding: true
 })
 
-const data = ref([
+// Define data type
+interface TableRow {
+  criteriaLabel: string
+  criteriaId: string
+  score: 'Pass' | 'Fail'
+  field: string
+  datapoint: string
+  grounding: string
+}
+
+const data = ref<TableRow[]>([
   {
     criteriaLabel: 'Raggiungimento della maggiore età',
     criteriaId: 'maggiore_eta',
@@ -115,8 +130,7 @@ const data = ref([
     field: '25',
     datapoint: 'Datapoint_ID',
     grounding: 'Datasource_ID'
-  },
-  // Add more sample data here
+  }
 ])
 
 const filteredData = computed(() => {
@@ -129,11 +143,11 @@ const filteredData = computed(() => {
   )
 })
 
-const toggleColumn = (column: string) => {
+const toggleColumn = (column: ColumnName) => {
   visibleColumns.value[column] = !visibleColumns.value[column]
 }
 
-const formatColumnName = (column: string) => {
+const formatColumnName = (column: ColumnName) => {
   return column
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase())
