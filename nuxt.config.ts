@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     preset: 'vercel'
   },
 
-  compatibilityDate: '2024-11-14',
+  compatibilityDate: '2024-04-03',
 
   modules: [
     '@nuxtjs/tailwindcss'
