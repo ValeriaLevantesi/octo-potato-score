@@ -34,23 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { useModal } from '~/composables/useModal'
+import { useAppState } from '~/composables/useAppState'
 
-interface Candidate {
-  id: string;
-  name: string;
-  status?: string;
-  isProcessing: boolean;
-}
-
-const nuxtApp = useNuxtApp()
-const state = nuxtApp.$state as {
-  candidates: Ref<Candidate[]>;
-  addNewCandidate: (name: string) => void;
-}
-
-const candidates = computed(() => state.candidates.value)
 const modal = useModal()
-</script> 
+const { state } = useAppState()
+
+const candidates = computed(() => state.value.candidates)
+</script>

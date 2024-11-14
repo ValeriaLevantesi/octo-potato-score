@@ -4,26 +4,24 @@
       <NuxtPage />
     </NuxtLayout>
     <NewCandidateModal
-      :is-open="modal.isModalOpen.value"
-      @close="modal.closeModal"
+      :is-open="isModalOpen"
+      @close="closeModal"
       @create="handleCreateCandidate"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useModal } from '~/composables/useModal'
-import { useNuxtApp } from '#app'
+import { useAppState } from '~/composables/useAppState'
 
-const modal = useModal()
-const nuxtApp = useNuxtApp()
+const { isModalOpen, closeModal } = useModal()
+const { addNewCandidate } = useAppState()
 
 const handleCreateCandidate = (data: { name: string }) => {
-  const state = nuxtApp.$state
-  if (state.addNewCandidate) {
-    state.addNewCandidate(data.name)
-  }
-  modal.closeModal()
+  addNewCandidate(data.name)
+  closeModal()
 }
 </script>
 

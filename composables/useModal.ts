@@ -1,33 +1,26 @@
-import { ref, provide, inject, type InjectionKey, Ref } from 'vue'
+import { computed } from 'vue'
+import { useState } from 'nuxt/app'
 
-interface ModalStore {
-  isModalOpen: Ref<boolean>
-  openModal: () => void
-  closeModal: () => void
+interface ModalState {
+  isModalOpen: boolean
 }
 
-const MODAL_KEY = Symbol() as InjectionKey<ModalStore>
-
 export const useModal = () => {
-  const existing = inject(MODAL_KEY)
-  if (existing) return existing
-
-  const isModalOpen = ref(false)
+  const state = useState<ModalState>('modal', () => ({
+    isModalOpen: false
+  }))
 
   const openModal = () => {
-    isModalOpen.value = true
+    state.value.isModalOpen = true
   }
 
   const closeModal = () => {
-    isModalOpen.value = false
+    state.value.isModalOpen = false
   }
 
-  const modal: ModalStore = {
-    isModalOpen,
+  return {
+    isModalOpen: computed(() => state.value.isModalOpen),
     openModal,
-    closeModal,
+    closeModal
   }
-
-  provide(MODAL_KEY, modal)
-  return modal
 } 

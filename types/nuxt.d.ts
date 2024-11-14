@@ -1,8 +1,8 @@
-declare module '#app' {
+import type { useAppState } from '../plugins/state'
+
+declare module 'nuxt/app' {
   interface NuxtApp {
-    $state: {
-      addNewCandidate: (name: string) => void
-    }
+    $appState: ReturnType<typeof useAppState>
   }
 }
 

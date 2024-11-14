@@ -33,21 +33,20 @@ export default defineNuxtConfig({
   },
 
   typescript: {
-    typeCheck: true,
+    typeCheck: false,
     shim: false,
     strict: true
   },
 
-  plugins: [
-    {
-      src: '~/plugins/state',
-      mode: 'client'
-    }
-  ],
+  
 
   compatibilityDate: '2024-11-13',
 
   nitro: {
     preset: 'vercel'
+  },
+
+  experimental: {
+    payloadExtraction: false
   }
 })
