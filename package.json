@@ -23,6 +23,6 @@
     "@volar/vue-language-server": "^1.6.5"
   },
   "engines": {
-    "node": "^18.0.0"
+    "node": "^18.0.0 || ^20.0.0"
   }
 }
