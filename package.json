@@ -5,13 +5,18 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "clean": "rm -rf .nuxt .output node_modules package-lock.json",
+    "serve": "npm run clean && npm install && npm run build && npm run preview"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.8.0",
-    "nuxt": "^3.8.0"
+    "@rollup/rollup-darwin-arm64": "^4.26.0",
+    "@types/vue": "^1.0.31",
+    "nuxt": "^3.8.0",
+    "rollup": "^4.26.0"
   },
   "engines": {
-    "node": "18.x"
+    "node": "^18.0.0"
   }
 }

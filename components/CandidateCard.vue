@@ -1,52 +1,24 @@
+<template>
+  <button
+    @click="router.push(`/candidates/${id}`)"
+    class="w-full bg-white rounded-2xl shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] p-6 hover:shadow-lg transition-shadow text-left"
+  >
+    <div class="flex justify-between items-center">
+      <h2 class="font-semibold text-[#374957]">{{ name }}</h2>
+      <span class="w-8 h-8 flex items-center justify-center text-[#9333EA]">
+        <span class="text-xl">→</span>
+      </span>
+    </div>
+  </button>
+</template>
+
 <script setup lang="ts">
-import { useRouter } from 'nuxt/app'
+import { useRouter } from '#app'
 
-interface CandidateProps {
-  name: string
-  status?: string
-  isProcessing?: boolean
-}
-
-const props = defineProps<CandidateProps>()
 const router = useRouter()
 
-const handleClick = () => {
-  if (props.isProcessing) return
-  router.push('/candidates/1')
-}
-
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (props.isProcessing) return
-  if (event.key === 'Enter' || event.key === ' ') {
-    handleClick()
-  }
-}
-</script>
-
-<template>
-  <div
-    class="bg-white rounded-2xl shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] flex justify-between items-center"
-    :class="{
-      'cursor-pointer p-6': !isProcessing,
-      'cursor-default px-6 h-[72px]': isProcessing
-    }"
-    :tabindex="isProcessing ? -1 : 0"
-    :role="isProcessing ? 'none' : 'button'"
-    :aria-label="!isProcessing ? `View details for candidate ${name}` : undefined"
-    @click="handleClick"
-    @keydown="handleKeyDown"
-  >
-    <div>
-      <h3 class="text-base font-semibold text-[#374957]">{{ name }}</h3>
-      <p 
-        v-if="status" 
-        class="text-xs text-[#FFAF32] mt-1"
-      >
-        {{ status }}
-      </p>
-    </div>
-    <svg v-if="!isProcessing" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 18L15 12L9 6" stroke="#9333EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-</template> 
+defineProps<{
+  id: string
+  name: string
+}>()
+</script> 

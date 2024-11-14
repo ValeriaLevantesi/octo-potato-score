@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm build",
   "builds": [
     {
       "src": "nuxt.config.ts",

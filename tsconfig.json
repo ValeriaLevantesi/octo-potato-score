@@ -3,6 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "~/*": ["./*"],
+      "#imports": ["./.nuxt/imports"],
+      "#app": ["./node_modules/nuxt/dist/app"]
+    }
   }
 } 

@@ -1,25 +1,21 @@
-import { computed } from 'vue'
-import { useState } from 'nuxt/app'
+import { ref } from '#imports'
 
-interface ModalState {
-  isModalOpen: boolean
-}
+// Create a singleton instance
+const isModalOpen = ref(false)
 
 export const useModal = () => {
-  const state = useState<ModalState>('modal', () => ({
-    isModalOpen: false
-  }))
-
   const openModal = () => {
-    state.value.isModalOpen = true
+    console.log('useModal: Opening modal')
+    isModalOpen.value = true
   }
 
   const closeModal = () => {
-    state.value.isModalOpen = false
+    console.log('useModal: Closing modal')
+    isModalOpen.value = false
   }
 
   return {
-    isModalOpen: computed(() => state.value.isModalOpen),
+    isModalOpen,
     openModal,
     closeModal
   }

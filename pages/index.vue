@@ -10,7 +10,8 @@
         <button
           class="w-12 h-12 flex items-center justify-center text-[#9333EA] hover:text-purple-700 transition-colors"
           aria-label="Add candidate"
-          @click="modal.openModal"
+          @click="router.push('/candidates/new')"
+          type="button"
         >
           <span class="w-8 h-8 flex items-center justify-center text-3xl">+</span>
         </button>
@@ -20,13 +21,15 @@
     <!-- Candidates List -->
     <div class="p-8 flex justify-center">
       <div class="space-y-4 w-full max-w-[680px]">
+        <div v-if="appState.candidates.value.length === 0" class="text-center text-gray-500 py-8">
+          No candidates yet. Click the + button to add one.
+        </div>
+        
         <CandidateCard
-          v-for="candidate in candidates"
+          v-for="candidate in appState.candidates.value"
           :key="candidate.id"
+          :id="candidate.id"
           :name="candidate.name"
-          :status="candidate.status"
-          :is-processing="candidate.isProcessing"
-          :class="{ 'opacity-50': candidate.isProcessing }"
         />
       </div>
     </div>
@@ -34,12 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useModal } from '~/composables/useModal'
+import { useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
 
-const modal = useModal()
-const { state } = useAppState()
-
-const candidates = computed(() => state.value.candidates)
+const router = useRouter()
+const appState = useAppState()
 </script>

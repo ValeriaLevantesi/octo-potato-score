@@ -1,37 +1,26 @@
-import { useState } from 'nuxt/app'
+import { ref } from '#imports'
 
 interface Candidate {
   id: string
   name: string
-  status?: string
-  isProcessing: boolean
+  website?: string
 }
 
-interface State {
-  candidates: Candidate[]
-}
+// Create a singleton state
+const candidates = ref<Candidate[]>([])
 
 export const useAppState = () => {
-  const state = useState<State>('app-state', () => ({
-    candidates: []
-  }))
-
-  const addNewCandidate = (name: string) => {
+  const addNewCandidate = (name: string, website?: string) => {
     const newCandidate: Candidate = {
-      id: crypto.randomUUID(),
+      id: Date.now().toString(),
       name,
-      isProcessing: false
+      website
     }
-    state.value.candidates.push(newCandidate)
-  }
-
-  const addCandidate = (candidate: Candidate) => {
-    state.value.candidates.push(candidate)
+    candidates.value.push(newCandidate)
   }
 
   return {
-    state,
-    addNewCandidate,
-    addCandidate
+    candidates,
+    addNewCandidate
   }
 } 

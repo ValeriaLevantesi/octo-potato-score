@@ -5,23 +5,31 @@
     </NuxtLayout>
     <NewCandidateModal
       :is-open="isModalOpen"
-      @close="closeModal"
+      @close="handleCloseModal"
       @create="handleCreateCandidate"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from '#imports'
 import { useModal } from '~/composables/useModal'
 import { useAppState } from '~/composables/useAppState'
 
-const { isModalOpen, closeModal } = useModal()
-const { addNewCandidate } = useAppState()
+const modal = useModal()
+const appState = useAppState()
+
+const isModalOpen = computed(() => modal.isModalOpen.value)
+
+const handleCloseModal = () => {
+  console.log('Closing modal')
+  modal.closeModal()
+}
 
 const handleCreateCandidate = (data: { name: string }) => {
-  addNewCandidate(data.name)
-  closeModal()
+  console.log('Creating candidate:', data.name)
+  appState.addNewCandidate(data.name)
+  modal.closeModal()
 }
 </script>
 
