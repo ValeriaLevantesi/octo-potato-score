@@ -14,15 +14,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nuxt": "^3.14.159",
-    "vue": "^3.5.12"
+    "@nuxt/typescript-runtime": "latest",
+    "nuxt": "^3.14.0"
   },
   "devDependencies": {
+    "typescript": "~5.3.0",
+    "vue-tsc": "^1.8.27",
+    "@nuxt/typescript-build": "latest",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@types/node": "^22.9.0",
-    "@types/tailwindcss": "^3.0.11",
-    "typescript": "^5.6.3",
-    "vue-tsc": "^2.1.10"
+    "@types/tailwindcss": "^3.0.11"
   }
 }

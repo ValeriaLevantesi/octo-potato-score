@@ -34,7 +34,8 @@ export default defineNuxtConfig({
 
   typescript: {
     typeCheck: true,
-    shim: false
+    shim: false,
+    strict: true
   },
 
   plugins: [
@@ -44,5 +45,9 @@ export default defineNuxtConfig({
     }
   ],
 
-  compatibilityDate: '2024-11-13'
+  compatibilityDate: '2024-11-13',
+
+  nitro: {
+    preset: 'vercel'
+  }
 })
