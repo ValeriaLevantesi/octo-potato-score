@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+
 const router = useRouter()
 const visibleColumns = ref({
   criteriaLabel: true,
@@ -127,7 +130,7 @@ const mockData = [
               :class="isVisible ? 'bg-purple-100 text-[#9333EA]' : 'border border-[#9333EA] text-[#9333EA]'"
               @click="toggleColumn(column)"
             >
-              {{ column.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) }}
+              {{ column.toString().replace(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase()) }}
               <svg v-if="isVisible" width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>

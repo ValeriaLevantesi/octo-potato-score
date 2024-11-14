@@ -2,16 +2,21 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "preserve",
     "skipLibCheck": true,
     "types": [
+      "nuxt",
       "@nuxt/types",
       "@types/node"
     ],
     "allowJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "~/*": ["./*"],
+      "#app": ["./.nuxt/types/app.d.ts"]
+    }
   },
   "exclude": [
     "node_modules"

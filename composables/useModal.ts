@@ -1,4 +1,4 @@
-import { ref, provide, inject, type InjectionKey } from 'vue'
+import { ref, provide, inject, type InjectionKey, Ref } from 'vue'
 
 interface ModalStore {
   isModalOpen: Ref<boolean>
