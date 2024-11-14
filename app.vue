@@ -13,11 +13,21 @@
 
 <script setup lang="ts">
 import { computed } from '#imports'
+import type { Ref } from 'vue'
 import { useModal } from '~/composables/useModal'
 import { useAppState } from '~/composables/useAppState'
 
-const modal = useModal()
-const appState = useAppState()
+interface ModalComposable {
+  isModalOpen: Ref<boolean>
+  closeModal: () => void
+}
+
+interface AppStateComposable {
+  addNewCandidate: (name: string) => void
+}
+
+const modal = useModal() as ModalComposable
+const appState = useAppState() as AppStateComposable
 
 const isModalOpen = computed(() => modal.isModalOpen.value)
 
