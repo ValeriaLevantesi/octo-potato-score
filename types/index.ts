@@ -2,12 +2,14 @@ export interface Candidate {
   id: string
   name: string
   site?: string
-  pitchFileName?: string
+  pitch: {
+    name: string
+  } | null
   score?: number
 }
 
 export interface CandidateForm {
   name: string
-  site: string
+  site?: string
   pitch: File | null
 } 

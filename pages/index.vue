@@ -10,7 +10,7 @@
         <button
           class="w-12 h-12 flex items-center justify-center text-[#9333EA] hover:text-purple-700 transition-colors"
           aria-label="Add candidate"
-          @click="router.push('/create')"
+          @click="router.push('/create-candidate')"
           type="button"
         >
           <span class="w-8 h-8 flex items-center justify-center text-3xl">+</span>
@@ -18,24 +18,21 @@
       </div>
     </header>
 
-    <!-- Content with top padding to account for fixed header -->
-    <div class="pt-[64px]">
-      <div class="p-8 flex justify-center">
-        <div class="space-y-4 w-full max-w-[680px]">
-          <div v-if="candidates.length === 0" class="text-center text-gray-500 py-8">
-            No candidates yet. Click the + button to add one.
+    <div class="p-6 pt-24">
+      <div class="space-y-4">
+        <button
+          v-for="candidate in candidates" 
+          :key="candidate.id"
+          @click="router.push(`/score/${candidate.id}`)"
+          class="w-full bg-white rounded-2xl shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] p-4 hover:bg-gray-50 transition-colors"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-[#374957] text-base font-medium">{{ candidate.name }}</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#9747FF]">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          
-          <button
-            v-for="candidate in candidates" 
-            :key="candidate.id"
-            @click="router.push(`/score`)"
-            class="w-full p-4 bg-white rounded-lg shadow border border-gray-200 text-left
-                   hover:shadow-md transition-shadow cursor-pointer"
-          >
-            <h3 class="text-xl font-medium text-gray-800">{{ candidate.name }}</h3>
-          </button>
-        </div>
+        </button>
       </div>
     </div>
   </div>
@@ -45,9 +42,11 @@
 import { computed } from 'vue'
 import { useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
-import type { Candidate } from '~/types'
 
 const router = useRouter()
 const appState = useAppState()
-const candidates = computed<Candidate[]>(() => appState.candidates.value)
+const candidates = computed(() => {
+  console.log('Current candidates:', appState.candidates.value)
+  return appState.candidates.value
+})
 </script>

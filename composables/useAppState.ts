@@ -1,30 +1,21 @@
-import { ref } from '#imports'
+import { ref } from 'vue'
 import type { Candidate, CandidateForm } from '~/types'
 
+// Create a single instance of the state
 const candidates = ref<Candidate[]>([])
-let nextId = 1
 
 export const useAppState = () => {
-  const addNewCandidate = (data: CandidateForm) => {
+  const addNewCandidate = (candidate: CandidateForm) => {
     candidates.value.push({
-      id: `candidate-${nextId++}`,
-      name: data.name,
-      site: data.site,
-      pitchFileName: data.pitch?.name,
-      score: 0
+      id: crypto.randomUUID(),
+      name: candidate.name,
+      site: candidate.site,
+      pitch: candidate.pitch ? { name: candidate.pitch.name } : null
     })
-  }
-
-  const updateScore = (id: string, score: number) => {
-    const candidate = candidates.value.find(c => c.id === id)
-    if (candidate) {
-      candidate.score = score
-    }
   }
 
   return {
     candidates,
-    addNewCandidate,
-    updateScore
+    addNewCandidate
   }
 } 
