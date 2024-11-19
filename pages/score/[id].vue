@@ -1,6 +1,9 @@
 <template>
-  <div class="min-h-screen bg-white" @click="closePopover">
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] z-10">
+  <div 
+    class="min-h-screen bg-white" 
+    @click="closePopover"
+  >
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] z-20">
       <div class="flex justify-between items-center px-8 h-[64px] relative">
         <button 
           @click="router.push('/')"
@@ -81,67 +84,107 @@
         </div>
       </div>
 
-      <!-- Table Headers -->
-      <div class="flex gap-2 mb-2">
-        <div 
-          v-for="column in columns" 
-          :key="column.id"
-          v-show="column.visible"
-          :class="[
-            'bg-[#2A2A2A] text-white px-6 py-4 rounded-2xl',
-            column.id === 'score' ? 'w-[120px]' : 'flex-1'
-          ]"
-        >
-          {{ column.label }}
-        </div>
-      </div>
-
-      <!-- Table Rows -->
-      <div class="space-y-[1px]">
-        <div 
-          v-for="(row, index) in tableData" 
-          :key="index"
-          :class="index % 2 === 0 ? 'bg-white' : 'bg-[#F5F3F5]'"
-          class="flex gap-2 px-6 py-4"
-        >
-          <div v-if="columns[0].visible" class="flex-1">{{ row.criteriaLabel }}</div>
-          <div v-if="columns[1].visible" class="flex-1">{{ row.criteriaId }}</div>
-          <div v-if="columns[2].visible" class="w-[120px]">
-            <span :class="row.score === 'Pass' ? 'text-green-500' : 'text-red-500'" class="flex items-center gap-1">
-              <svg v-if="row.score === 'Pass'" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.3334 4L6.00008 11.3333L2.66675 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              {{ row.score }}
-            </span>
-          </div>
-          <div v-if="columns[3].visible" class="flex-1">{{ row.field }}</div>
-          <div v-if="columns[4].visible" class="flex-1">{{ row.datapoint }}</div>
-          <div v-if="columns[5].visible" class="flex-1 flex items-center justify-between">
-            {{ row.grounding }}
-            <div class="relative">
-              <button 
-                class="text-[#9747FF] w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
-                :class="{ 
-                  'bg-[#F4EDFD]': activePopover === index,
-                  'active:bg-[#F5F3F5] active:text-[#260849]': !disabled 
-                }"
-                @click.stop="togglePopover(index)"
-                :disabled="disabled"
+      <!-- Table container with sticky headers -->
+      <div class="relative">
+        <!-- Sticky Headers -->
+        <div class="sticky top-[64px] bg-white z-10 pb-2">
+          <div class="flex gap-2 relative select-none">
+            <div 
+              v-for="(column, index) in columns" 
+              :key="column.id"
+              v-show="column.visible"
+              class="relative" 
+              :style="{ 
+                flex: column.id === 'score' ? '0 0 120px' : `${columnWidths[index].width} 1 0`,
+                minWidth: column.id === 'score' ? '120px' : '100px'
+              }"
+            >
+              <div 
+                class="bg-[#2A2A2A] text-white h-[48px] flex items-center rounded-2xl w-full pl-6 pr-6"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M8 5.33334H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M7.33325 8H7.99992V10.6667H8.66659" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <Popover :visible="activePopover === index">
-                <div>
-                  <p>Details about {{ row.grounding }}</p>
+                {{ column.label }}
+              </div>
+              
+              <!-- Resize handle -->
+              <div
+                v-if="index < columns.length - 1 && column.id !== 'score'"
+                class="absolute top-0 right-[-6px] w-3 h-full cursor-col-resize z-10 hover:bg-[#9747FF]/20 group"
+                @mousedown="startResize($event, index)"
+              >
+                <div class="hidden group-hover:block absolute right-[5px] top-0 w-[2px] h-full bg-[#9747FF]/50"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable Table Body -->
+        <div class="space-y-[1px]">
+          <div 
+            v-for="(row, rowIndex) in tableData" 
+            :key="rowIndex"
+            :class="rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#F5F3F5]'"
+            class="flex gap-2 px-6 py-4"
+          >
+            <div 
+              v-for="(column, colIndex) in columns"
+              :key="column.id"
+              v-show="column.visible"
+              class="pl-6 pr-6 break-words"
+              :style="{ 
+                flex: column.id === 'score' ? '0 0 120px' : `${columnWidths[colIndex].width} 1 0`,
+                minWidth: column.id === 'score' ? '120px' : '100px'
+              }"
+            >
+              <!-- Column content -->
+              <template v-if="column.id === 'score'">
+                <div :class="[
+                  'px-2 py-1 rounded-full text-sm inline-flex items-center',
+                  row.score === 'Pass' 
+                    ? 'bg-[#DCFCE7] text-[#166534]' 
+                    : 'bg-[#FEE2E2] text-[#991B1B]'
+                ]">
+                  {{ row.score }}
                 </div>
-              </Popover>
+              </template>
+              <template v-else-if="column.id === 'grounding'">
+                <div class="flex items-center justify-between w-full">
+                  <span class="break-words mr-2">{{ row[column.id as keyof TableRow] }}</span>
+                  <div class="relative flex-shrink-0">
+                    <button 
+                      class="text-[#9747FF] w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200"
+                      :class="{ 
+                        'bg-[#F4EDFD]': activePopover === rowIndex,
+                      }"
+                      @click.stop="togglePopover(rowIndex)"
+                      aria-label="Show details"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 5.33334H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.33325 8H7.99992V10.6667H8.66659" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+
+                    <!-- Popover -->
+                    <div 
+                      v-if="activePopover === rowIndex"
+                      class="fixed transform translate-x-[-100%] mt-2 bg-white rounded-lg shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] z-[9999] min-w-[300px] border border-[#E5E7EB]"
+                      @click.stop
+                    >
+                      <div class="p-4">
+                        <h3 class="font-medium text-[#374957] mb-2">Source Details</h3>
+                        <div class="text-sm text-[#374957] space-y-2">
+                          <p>Source ID: {{ row[column.id as keyof TableRow] }}</p>
+                          <p>Additional details can go here...</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <span class="break-words">{{ row[column.id as keyof TableRow] }}</span>
+              </template>
             </div>
           </div>
         </div>
@@ -154,7 +197,6 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
-import Popover from '~/components/Popover.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -164,17 +206,50 @@ const candidate = computed(() =>
   appState.candidates.value.find(c => c.id === route.params.id)
 )
 
+// Replace the Map with a single number or null state
 const activePopover = ref<number | null>(null)
 
-const togglePopover = (index: number) => {
-  activePopover.value = activePopover.value === index ? null : index
+// Update toggle function
+const togglePopover = (rowIndex: number) => {
+  // If clicking the same popover, close it
+  if (activePopover.value === rowIndex) {
+    activePopover.value = null
+  } else {
+    // If clicking a different popover, close the old one and open the new one
+    activePopover.value = rowIndex
+  }
 }
 
+// Update close function
 const closePopover = () => {
   activePopover.value = null
 }
 
-const columns = ref([
+// Add these type definitions at the top of your script
+type ColumnId = 'criteriaLabel' | 'criteriaId' | 'score' | 'field' | 'datapoint' | 'grounding'
+
+interface TableRow {
+  criteriaLabel: string
+  criteriaId: string
+  score: 'Pass' | 'Fail'
+  field: string
+  datapoint: string
+  grounding: string
+}
+
+interface Column {
+  id: ColumnId
+  label: string
+  visible: boolean
+}
+
+interface ColumnWidth {
+  id: ColumnId
+  width: number
+}
+
+// Update your refs with the new types
+const columns = ref<Column[]>([
   { id: 'criteriaLabel', label: 'Criteria label', visible: true },
   { id: 'criteriaId', label: 'Criteria ID', visible: true },
   { id: 'score', label: 'Score', visible: true },
@@ -190,7 +265,7 @@ const toggleColumn = (columnId: string) => {
   }
 }
 
-const tableData = ref([
+const tableData = ref<TableRow[]>([
   {
     criteriaLabel: 'Number of slides greater than 50',
     criteriaId: 'slides_count_50',
@@ -368,4 +443,76 @@ const showInfo = ref(false)
 const toggleInfo = () => {
   showInfo.value = !showInfo.value
 }
-</script> 
+
+// Add these new refs
+const isResizing = ref(false)
+const currentResizer = ref<number | null>(null)
+const startX = ref(0)
+const startWidths = ref<number[]>([])
+
+// Update columnWidths to use flex values
+const columnWidths = ref<ColumnWidth[]>([
+  { id: 'criteriaLabel', width: 1 }, // width now represents flex ratio
+  { id: 'criteriaId', width: 1 },
+  { id: 'score', width: 0 }, // 0 for fixed width
+  { id: 'field', width: 1 },
+  { id: 'datapoint', width: 1 },
+  { id: 'grounding', width: 1 }
+])
+
+// Update resize handlers
+const handleResize = (event: MouseEvent) => {
+  if (!isResizing.value || currentResizer.value === null) return
+  
+  const diff = event.pageX - startX.value
+  const currentColumn = columnWidths.value[currentResizer.value]
+  const nextColumn = columnWidths.value[currentResizer.value + 1]
+  
+  if (currentColumn && nextColumn && currentColumn.id !== 'score') {
+    const totalFlex = startWidths.value[currentResizer.value] + startWidths.value[currentResizer.value + 1]
+    const ratio = diff / 500 // Adjust sensitivity
+    
+    // Update flex ratios while maintaining total
+    const newCurrentFlex = Math.max(0.2, startWidths.value[currentResizer.value] + ratio)
+    const newNextFlex = totalFlex - newCurrentFlex
+    
+    if (newNextFlex >= 0.2) { // Ensure minimum flex
+      columnWidths.value[currentResizer.value].width = newCurrentFlex
+      columnWidths.value[currentResizer.value + 1].width = newNextFlex
+    }
+  }
+}
+
+const startResize = (event: MouseEvent, index: number) => {
+  if (columnWidths.value[index].id === 'score') return
+  
+  isResizing.value = true
+  currentResizer.value = index
+  startX.value = event.pageX
+  
+  // Store initial widths
+  startWidths.value = columnWidths.value.map(col => col.width)
+  
+  document.addEventListener('mousemove', handleResize)
+  document.addEventListener('mouseup', stopResize)
+}
+
+const stopResize = () => {
+  isResizing.value = false
+  currentResizer.value = null
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
+}
+</script>
+
+<style scoped>
+/* Add these styles to prevent text selection while resizing */
+.select-none {
+  user-select: none;
+}
+
+/* Optional: Add transition for smooth width changes */
+.transition-width {
+  transition: width 0.1s ease;
+}
+</style> 
