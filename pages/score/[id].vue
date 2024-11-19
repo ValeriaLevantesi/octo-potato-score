@@ -4,25 +4,36 @@
       <div class="flex justify-between items-center px-8 h-[64px] relative">
         <button 
           @click="router.push('/')"
-          class="text-[#9747FF] p-2 -ml-2"
+          class="text-[#9747FF] w-12 h-12 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
+          :class="{ 'active:bg-[#F5F3F5] active:text-[#260849]': !disabled }"
           aria-label="Go back"
+          :disabled="disabled"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <h1 class="font-bold text-[#374957] absolute left-1/2 -translate-x-1/2 text-base leading-none">
           {{ candidate?.name }}
         </h1>
-        <button class="text-[#9747FF]" aria-label="Information">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button 
+          class="text-[#9747FF] w-12 h-12 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
+          :class="{ 
+            'bg-[#F4EDFD]': showInfo,
+            'active:bg-[#F5F3F5] active:text-[#260849]': !disabled 
+          }"
+          aria-label="Information"
+          @click="toggleInfo"
+          :disabled="disabled"
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
       </div>
     </header>
 
-    <div class="p-6 pt-24">
+    <div class="p-6 pt-[72px]">
       <!-- Filters -->
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-4">
@@ -351,5 +362,10 @@ const disabled = computed(() => {
 // Redirect if candidate not found
 if (!candidate.value) {
   router.push('/')
+}
+
+const showInfo = ref(false)
+const toggleInfo = () => {
+  showInfo.value = !showInfo.value
 }
 </script> 

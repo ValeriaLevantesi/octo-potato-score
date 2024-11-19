@@ -4,10 +4,13 @@
       <div class="flex items-center h-[64px] px-8 relative">
         <button 
           @click="router.push('/')"
-          class="text-[#9747FF] p-2 -ml-2"
+          class="text-[#9747FF] w-12 h-12 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
+          :class="{ 'active:bg-[#F5F3F5] active:text-[#260849]': !disabled }"
+          aria-label="Close"
+          :disabled="disabled"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <h1 class="text-[#374957] text-base font-bold absolute left-1/2 -translate-x-1/2">
@@ -17,7 +20,7 @@
     </header>
 
     <div class="pt-[64px]">
-      <div class="p-6 max-w-[680px] mx-auto space-y-6 pt-8">
+      <div class="p-6 max-w-[680px] mx-auto space-y-6 pt-4">
         <div class="space-y-2">
           <label class="block text-[#374957] font-medium">Name</label>
           <input
@@ -121,6 +124,7 @@ const router = useRouter()
 const appState = useAppState()
 const fileInput = ref<HTMLInputElement | null>(null)
 const isHovering = ref(false)
+const disabled = ref(false)
 
 const form = ref<CandidateForm>({
   name: '',

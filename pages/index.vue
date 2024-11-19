@@ -9,12 +9,15 @@
             Candidates
           </h1>
           <button
-            class="w-12 h-12 flex items-center justify-center text-[#9333EA] hover:text-purple-700 transition-colors"
+            class="text-[#9747FF] w-12 h-12 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
+            :class="{ 'active:bg-[#F5F3F5] active:text-[#260849]': !disabled }"
             aria-label="Add candidate"
             @click="router.push('/create-candidate')"
-            type="button"
+            :disabled="disabled"
           >
-            <span class="w-8 h-8 flex items-center justify-center text-3xl">+</span>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </button>
         </div>
       </header>
@@ -39,12 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
 
 const router = useRouter()
 const appState = useAppState()
+const disabled = ref(false)
+
 const candidates = computed(() => {
   console.log('Current candidates:', appState.candidates.value)
   return appState.candidates.value
