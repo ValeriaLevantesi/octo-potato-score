@@ -17,7 +17,7 @@
     </header>
 
     <div class="pt-[64px]">
-      <div class="p-6 max-w-[680px] mx-auto space-y-6">
+      <div class="p-6 max-w-[680px] mx-auto space-y-6 pt-8">
         <div class="space-y-2">
           <label class="block text-[#374957] font-medium">Name</label>
           <input

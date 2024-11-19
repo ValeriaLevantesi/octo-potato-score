@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-white" @click="closePopover">
     <header class="fixed top-0 left-0 right-0 bg-white shadow-[0_8px_24px_0_rgba(55,73,87,0.10)] z-10">
       <div class="flex justify-between items-center px-8 h-[64px] relative">
         <button 
@@ -110,13 +110,28 @@
           <div v-if="columns[4].visible" class="flex-1">{{ row.datapoint }}</div>
           <div v-if="columns[5].visible" class="flex-1 flex items-center justify-between">
             {{ row.grounding }}
-            <button class="text-[#9747FF]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 5.33334H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M7.33325 8H7.99992V10.6667H8.66659" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
+            <div class="relative">
+              <button 
+                class="text-[#9747FF] w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F5F3F5] transition-colors duration-200 disabled:opacity-50"
+                :class="{ 
+                  'bg-[#F4EDFD]': activePopover === index,
+                  'active:bg-[#F5F3F5] active:text-[#260849]': !disabled 
+                }"
+                @click.stop="togglePopover(index)"
+                :disabled="disabled"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 5.33334H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7.33325 8H7.99992V10.6667H8.66659" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <Popover :visible="activePopover === index">
+                <div>
+                  <p>Details about {{ row.grounding }}</p>
+                </div>
+              </Popover>
+            </div>
           </div>
         </div>
       </div>
@@ -128,6 +143,7 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
+import Popover from '~/components/Popover.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -136,6 +152,16 @@ const appState = useAppState()
 const candidate = computed(() => 
   appState.candidates.value.find(c => c.id === route.params.id)
 )
+
+const activePopover = ref<number | null>(null)
+
+const togglePopover = (index: number) => {
+  activePopover.value = activePopover.value === index ? null : index
+}
+
+const closePopover = () => {
+  activePopover.value = null
+}
 
 const columns = ref([
   { id: 'criteriaLabel', label: 'Criteria label', visible: true },
@@ -315,6 +341,12 @@ const tableData = ref([
     grounding: 'Datasource_ID'
   }
 ])
+
+// Add this to control the disabled state
+const disabled = computed(() => {
+  // Add your condition here
+  return false
+})
 
 // Redirect if candidate not found
 if (!candidate.value) {
