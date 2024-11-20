@@ -39,32 +39,37 @@
     <div class="p-6 pt-[72px]">
       <!-- Filters -->
       <div class="mb-6">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="text-sm text-[#374957]">Show/hide:</span>
-          <div class="flex flex-wrap gap-2">
-            <button 
-              v-for="column in columns" 
+        <div class="flex items-center gap-4 mb-6 flex-wrap">
+          <span class="text-[14px] font-['Work_Sans'] text-[#374957] font-normal">Show/Hide:</span>
+          <div class="flex gap-2 flex-wrap">
+            <div
+              v-for="column in columns"
               :key="column.id"
-              @click="toggleColumn(column.id)"
-              :class="[
-                'px-3 py-1.5 rounded-full text-sm flex items-center gap-1',
-                column.visible 
-                  ? 'bg-[#F3E8FF] text-[#9747FF]' 
-                  : 'bg-[#F5F3F5] text-[#374957]'
-              ]"
+              @click="toggleColumnVisibility(column.id)"
+              class="h-[32px] px-4 rounded-[8px] cursor-pointer transition-colors duration-200 flex items-center gap-2 border border-[#9747FF] shrink-0 text-[#2A2A2A]"
+              :class="column.visible 
+                ? 'bg-[#F4EDFD]' 
+                : 'bg-[#F5F3F5]'"
             >
-              {{ column.label }}
+              <span class="text-[14px] font-['Work_Sans'] font-normal whitespace-nowrap">{{ column.label }}</span>
               <svg 
-                v-if="column.visible"
-                width="16" 
-                height="16" 
-                viewBox="0 0 16 16" 
+                v-if="column.visible" 
+                width="12" 
+                height="12" 
+                viewBox="0 0 12 12" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
+                class="mt-[1px] shrink-0 text-[#9747FF]"
               >
-                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path 
+                  d="M9 3L3 9M3 3L9 9" 
+                  stroke="currentColor" 
+                  stroke-width="1.5" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"
+                />
               </svg>
-            </button>
+            </div>
           </div>
         </div>
         
@@ -88,26 +93,26 @@
       <div class="relative">
         <!-- Sticky Headers -->
         <div class="sticky top-[64px] bg-white z-10 pb-2">
-          <div class="flex gap-2 relative select-none">
+          <div class="flex gap-2 mb-2 relative select-none">
             <div 
               v-for="(column, index) in columns" 
               :key="column.id"
               v-show="column.visible"
               class="relative" 
               :style="{ 
-                flex: column.id === 'score' ? '0 0 120px' : `${columnWidths[index].width} 1 0`,
-                minWidth: column.id === 'score' ? '120px' : '100px'
+                flex: `${columnWidths[index].width} 1 0`,
+                minWidth: '100px'
               }"
             >
               <div 
-                class="bg-[#2A2A2A] text-white h-[48px] flex items-center rounded-2xl w-full pl-6 pr-6"
+                class="bg-[#2A2A2A] text-white h-[48px] flex items-center rounded-[8px] w-full pl-6 pr-6"
               >
                 {{ column.label }}
               </div>
               
               <!-- Resize handle -->
               <div
-                v-if="index < columns.length - 1 && column.id !== 'score'"
+                v-if="index < columns.length - 1"
                 class="absolute top-0 right-[-6px] w-3 h-full cursor-col-resize z-10 hover:bg-[#9747FF]/20 group"
                 @mousedown="startResize($event, index)"
               >
@@ -131,8 +136,8 @@
               v-show="column.visible"
               class="pl-6 pr-6 break-words"
               :style="{ 
-                flex: column.id === 'score' ? '0 0 120px' : `${columnWidths[colIndex].width} 1 0`,
-                minWidth: column.id === 'score' ? '120px' : '100px'
+                flex: `${columnWidths[colIndex].width} 1 0`,
+                minWidth: '100px'
               }"
             >
               <!-- Column content -->
@@ -194,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from '#app'
 import { useAppState } from '~/composables/useAppState'
 
@@ -218,6 +223,10 @@ const togglePopover = (rowIndex: number) => {
     // If clicking a different popover, close the old one and open the new one
     activePopover.value = rowIndex
   }
+
+
+
+
 }
 
 // Update close function
@@ -444,17 +453,17 @@ const toggleInfo = () => {
   showInfo.value = !showInfo.value
 }
 
-// Add these new refs
+// Update the resize handlers
 const isResizing = ref(false)
 const currentResizer = ref<number | null>(null)
 const startX = ref(0)
 const startWidths = ref<number[]>([])
 
-// Update columnWidths to use flex values
+// Initialize column widths
 const columnWidths = ref<ColumnWidth[]>([
-  { id: 'criteriaLabel', width: 1 }, // width now represents flex ratio
+  { id: 'criteriaLabel', width: 1 },
   { id: 'criteriaId', width: 1 },
-  { id: 'score', width: 0 }, // 0 for fixed width
+  { id: 'score', width: 0.8 },
   { id: 'field', width: 1 },
   { id: 'datapoint', width: 1 },
   { id: 'grounding', width: 1 }
@@ -465,34 +474,35 @@ const handleResize = (event: MouseEvent) => {
   if (!isResizing.value || currentResizer.value === null) return
   
   const diff = event.pageX - startX.value
+  const totalWidth = window.innerWidth
+  const ratio = diff / totalWidth
+
+  // Get current and next column
   const currentColumn = columnWidths.value[currentResizer.value]
   const nextColumn = columnWidths.value[currentResizer.value + 1]
-  
-  if (currentColumn && nextColumn && currentColumn.id !== 'score') {
+
+  if (currentColumn && nextColumn) {
     const totalFlex = startWidths.value[currentResizer.value] + startWidths.value[currentResizer.value + 1]
-    const ratio = diff / 500 // Adjust sensitivity
     
-    // Update flex ratios while maintaining total
-    const newCurrentFlex = Math.max(0.2, startWidths.value[currentResizer.value] + ratio)
-    const newNextFlex = totalFlex - newCurrentFlex
+    // Calculate new widths ensuring minimum flex values
+    let newCurrentWidth = Math.max(0.2, startWidths.value[currentResizer.value] + ratio * 2)
+    let newNextWidth = Math.max(0.2, startWidths.value[currentResizer.value + 1] - ratio * 2)
     
-    if (newNextFlex >= 0.2) { // Ensure minimum flex
-      columnWidths.value[currentResizer.value].width = newCurrentFlex
-      columnWidths.value[currentResizer.value + 1].width = newNextFlex
-    }
+    // Update the widths
+    columnWidths.value[currentResizer.value].width = newCurrentWidth
+    columnWidths.value[currentResizer.value + 1].width = newNextWidth
   }
 }
 
 const startResize = (event: MouseEvent, index: number) => {
-  if (columnWidths.value[index].id === 'score') return
-  
   isResizing.value = true
   currentResizer.value = index
   startX.value = event.pageX
   
-  // Store initial widths
+  // Store all current widths
   startWidths.value = columnWidths.value.map(col => col.width)
   
+  // Add event listeners
   document.addEventListener('mousemove', handleResize)
   document.addEventListener('mouseup', stopResize)
 }
@@ -502,6 +512,34 @@ const stopResize = () => {
   currentResizer.value = null
   document.removeEventListener('mousemove', handleResize)
   document.removeEventListener('mouseup', stopResize)
+}
+
+// Add click outside handler to close popover
+onMounted(() => {
+  document.addEventListener('click', closePopover)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closePopover)
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
+})
+
+// Add a computed property to count visible columns
+const visibleColumnsCount = computed(() => 
+  columns.value.filter(col => col.visible).length
+)
+
+// Update the toggle visibility function
+const toggleColumnVisibility = (columnId: string) => {
+  const columnIndex = columns.value.findIndex(col => col.id === columnId)
+  if (columnIndex === -1) return
+  
+  if (columns.value[columnIndex].visible && visibleColumnsCount.value <= 1) {
+    return
+  }
+
+  columns.value[columnIndex].visible = !columns.value[columnIndex].visible
 }
 </script>
 
